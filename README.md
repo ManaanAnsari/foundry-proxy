@@ -1,17 +1,26 @@
-## Foundry
+Transperent vs UUPS proxies
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+remember storage is store in the proxy not the implementation
 
-Foundry consists of:
+proxy -> implementation -> stores data in proxy
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+its like
+user calls the proxy -> the function is not found in the proxy contract -> triggers fallback
+-> fallback delegate call to the implementation
 
-## Documentation
+the above one was transperent
 
-https://book.getfoundry.sh/
+proxy contract never use constructor
+
+proxy -> deploy implementation -> call some "initializer function"
+
+y?
+
+```
+Constructors are only called during the contract deployment, proxies can't access that information as it's stored on the original contract not on the proxy, meaning, **proxies are completely oblivious to the existence of constructors**.
+
+So, all the initialization will be lost since it was run in the context of the Logic contract and not the Proxy contract.
+```
 
 ## Usage
 
@@ -25,42 +34,4 @@ $ forge build
 
 ```shell
 $ forge test
-```
-
-### Format
-
-```shell
-$ forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
 ```
